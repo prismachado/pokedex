@@ -11,6 +11,8 @@ import Pokeball from "../../components/Pokeball";
 
 import { Container, Button, PokedexNumber, PokemonImage } from "./styles";
 import getColorByPokemonType from "../../utils/getColorByPokemonType";
+import { AntDesign as Icon } from "@expo/vector-icons";
+import { useTheme } from "styled-components";
 
 type PokemonCardProps = {
   pokemon: Pokemon;
@@ -26,12 +28,13 @@ const PokemonCard = ({
   opacity,
 }: PokemonCardProps) => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const handleNavigateToPokemon = useCallback(() => {
-    /*navigation.navigate("Pokemon", {
+    navigation.navigate("Pokemon", {
       pokemon,
       from: "card",
-    });*/
+    });
   }, [navigation, pokemon]);
 
   const backgroundColor = useMemo(
@@ -66,8 +69,11 @@ const PokemonCard = ({
           </Text>
         </SharedElement>
 
-        <PokedexNumber style={{ fontSize: 10 }}>
-          #{pokemon.pokedex_number}
+        <PokedexNumber
+          style={{ fontSize: 10 }}
+          onPress={() => console.tron.log("favorita")}
+        >
+          <Icon name="hearto" size={20} color={colors.white} />
         </PokedexNumber>
 
         <SharedElement

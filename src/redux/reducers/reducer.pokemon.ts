@@ -16,6 +16,10 @@ const { Types, Creators } = createActions<PokedexActionTypes, CreatorTypes>(
     pokedexSuccessPokemons: ["data"],
     pokedexFailurePokemons: ["error"],
 
+    pokedexRequestTypes: ["data"],
+    pokedexSuccessTypes: ["data"],
+    pokedexFailureTypes: ["error"],
+
     reset: null,
   },
   {
@@ -25,6 +29,7 @@ const { Types, Creators } = createActions<PokedexActionTypes, CreatorTypes>(
 
 const INITIAL_STATE = Immutable({
   pokemons: [],
+  types: [],
   loading: false,
   error: null,
 });
@@ -41,11 +46,29 @@ export const reducer = createReducer<PokemonsState, ReducerTypes>(
       return state.merge({
         pokemons: action.data,
         loading: false,
+        error: null,
       });
     },
     [Types.POKEDEX_FAILURE_POKEMONS]: (state, action) => {
       return state.merge({
-        error: action.error.message,
+        error: action.error,
+        loading: false,
+      });
+    },
+    [Types.POKEDEX_REQUEST_TYPES]: (state) => {
+      return state.merge({
+        loading: true,
+      });
+    },
+    [Types.POKEDEX_SUCCESS_TYPES]: (state, action) => {
+      return state.merge({
+        types: action.data,
+        loading: false,
+      });
+    },
+    [Types.POKEDEX_FAILURE_TYPES]: (state, action) => {
+      return state.merge({
+        error: action.error,
         loading: false,
       });
     },

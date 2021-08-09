@@ -36,4 +36,21 @@ export type Pokemon = {
   egg_groups: EggGroup[];
 };
 
+export interface Types {
+  multiplier: string;
+  type: string;
+}
+
+export type TypesResult = {
+  name: string;
+  url: string;
+};
+
+export type TypeApiResult = {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: TypesResult[];
+};
+
 export default Pokemon;

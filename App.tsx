@@ -3,13 +3,12 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, Text, View } from "react-native";
-import { Provider, useDispatch } from "react-redux";
 
-import { PokemonsActions } from "./src/redux/reducers/reducer.pokemon";
+import { Provider } from "react-redux";
 import store from "./src/redux/store";
 
 import Home from "./src/screens/home";
+import Pokemon from "./src/screens/Pokemon";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/styles/theme";
 
@@ -18,21 +17,33 @@ if (__DEV__) {
 }
 
 export default function App() {
-  /*const dispatch = useDispatch();
-
-  dispatch(PokemonsActions.pokedexRequestPokemons());*/
-
   const Stack = createStackNavigator();
 
   return (
     <Provider store={store}>
       <NavigationContainer>
+        <StatusBar style="dark" backgroundColor="#FFF" translucent />
         <ThemeProvider theme={theme}>
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              gestureEnabled: false,
+              headerShown: false,
+              cardStyle: {
+                backgroundColor: "#fff",
+              },
+            }}
+          >
+            <Stack.Screen name="Home" component={Home} />
             <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ title: "Welcome" }}
+              name="Pokemon"
+              component={Pokemon}
+              options={{
+                cardStyleInterpolator: ({ current }) => ({
+                  cardStyle: {
+                    opacity: current.progress,
+                  },
+                }),
+              }}
             />
           </Stack.Navigator>
         </ThemeProvider>
@@ -40,12 +51,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

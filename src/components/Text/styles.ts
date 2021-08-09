@@ -7,9 +7,5 @@ export const Container = styled(Animated.Text)<TextProps>`
   ${({ theme, variant }) => theme.textVariantes[variant]};
   color: ${({ color }) => color};
 
-  ${(props) =>
-    props.bold &&
-    css`
-      font-family: ${({ theme }) => theme.fontFamily.bold};
-    `}
+  ${(props) => props.bold && css``}
 `;
