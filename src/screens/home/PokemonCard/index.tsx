@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Animated } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { SharedElement } from "react-navigation-shared-element";
 
@@ -13,6 +14,11 @@ import { Container, Button, PokedexNumber, PokemonImage } from "./styles";
 import getColorByPokemonType from "../../../utils/getColorByPokemonType";
 import { AntDesign as Icon } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
+import {
+  addFavorite,
+  listFavorites,
+  removeFavorite,
+} from "../../../services/firebase";
 
 type PokemonCardProps = {
   pokemon: Pokemon;
@@ -29,6 +35,31 @@ const PokemonCard = ({
 }: PokemonCardProps) => {
   const navigation = useNavigation();
   const { colors } = useTheme();
+
+  const [favoritePokemons, setFavoritePokemons] = useState([] as any);
+
+  const getFavorites = async () => {
+    const favorites = await listFavorites();
+    console.tron.log("favorites", favorites);
+    setFavoritePokemons(favorites);
+  };
+  useEffect(() => {
+    getFavorites();
+  }, []);
+
+  const add = async (id: any, name: any) => {
+    console.tron.log("entrou aqui");
+    await addFavorite(id, name);
+    setFavoritePokemons([]);
+    getFavorites();
+  };
+
+  const remove = async (id: number) => {
+    const result = favoritePokemons.find((favorite: any) => favorite.id === id);
+    await removeFavorite(result.key);
+    setFavoritePokemons([]);
+    getFavorites();
+  };
 
   const handleNavigateToPokemon = useCallback(() => {
     navigation.navigate("Pokemon", {
@@ -69,14 +100,15 @@ const PokemonCard = ({
           </Text>
         </SharedElement>
 
-        <PokedexNumber style={{ fontSize: 10 }}>
-          <Icon
-            onPress={() => console.tron.log("favorita")}
-            name="hearto"
-            size={15}
-            color={colors.white}
-          />
-        </PokedexNumber>
+        {favoritePokemons.some((e: any) => e.id === pokemon.id) ? (
+          <TouchableOpacity onPress={() => remove(pokemon.id)}>
+            <Icon name="heart" size={18} color={colors.white} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={async () => add(pokemon.id, pokemon.name)}>
+            <Icon name="hearto" size={18} color={colors.white} />
+          </TouchableOpacity>
+        )}
 
         <SharedElement
           id={`pokemon.${pokemon.id}.image`}

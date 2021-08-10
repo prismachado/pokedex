@@ -20,6 +20,11 @@ import {
 import { useTheme } from "styled-components";
 import firebase from "../../../config/firebaseConnection";
 import { useState } from "react";
+import {
+  addFavorite,
+  listFavorites,
+  removeFavorite,
+} from "../../../services/firebase";
 
 type SummaryProps = {
   translateY: Animated.Value;
@@ -33,48 +38,25 @@ const Summary = ({ pokemon, translateY }: SummaryProps) => {
   const { colors } = useTheme();
   const [favoritePokemons, setFavoritePokemons] = useState([] as any);
 
-  const listFavorites = async () => {
-    await firebase
-      .database()
-      .ref("pokemons")
-      .on("value", (snapshot) => {
-        snapshot.forEach((item) => {
-          let data: any = {
-            key: item.key,
-            id: item.val().id,
-            name: item.val().name,
-          };
-          setFavoritePokemons((old: any) => [...old, data]);
-        });
-      });
+  const getFavorites = async () => {
+    const favorites = await listFavorites();
+    setFavoritePokemons(favorites);
   };
   useEffect(() => {
-    listFavorites();
+    getFavorites();
   }, []);
 
-  const addFavorite = async () => {
-    if (favoritePokemons.length >= 5) {
-      Alert.alert(
-        "Fail to add favorite pokemon",
-        "You have reached the limit of 5 favorite pokemons."
-      );
-    } else {
-      let pokemons = await firebase.database().ref("pokemons");
-      let key: any = pokemons.push().key;
-      pokemons.child(key).set({
-        id: pokemon.id,
-        name: pokemon.name,
-      });
-      setFavoritePokemons([]);
-      await listFavorites();
-    }
+  const add = async (id: any, name: any) => {
+    await addFavorite(id, name);
+    setFavoritePokemons([]);
+    getFavorites();
   };
 
-  const removeFavorite = async (id: number) => {
+  const remove = async (id: number) => {
     const result = favoritePokemons.find((favorite: any) => favorite.id === id);
-    await firebase.database().ref("pokemons").child(result.key).remove();
+    await removeFavorite(result.key);
     setFavoritePokemons([]);
-    await listFavorites();
+    getFavorites();
   };
 
   useEffect(() => {
@@ -192,14 +174,14 @@ const Summary = ({ pokemon, translateY }: SummaryProps) => {
                   name="heart"
                   size={30}
                   color={colors.white}
-                  onPress={() => removeFavorite(pokemon.id)}
+                  onPress={() => remove(pokemon.id)}
                 />
               ) : (
                 <Icon
                   name="hearto"
                   size={30}
                   color={colors.white}
-                  onPress={addFavorite}
+                  onPress={() => add(pokemon.id, pokemon.name)}
                 />
               )}
             </Animated.View>
