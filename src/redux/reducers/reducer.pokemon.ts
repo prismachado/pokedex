@@ -8,7 +8,6 @@ import {
   ReducerTypes,
 } from "../types/types.pokemon";
 import { PokedexReducers } from "../models/types.redux";
-import Pokemon from "../../services/api/types";
 
 const { Types, Creators } = createActions<PokedexActionTypes, CreatorTypes>(
   {

@@ -13,16 +13,11 @@ function* getPokemons({ data }: PokedexRequestPokemons) {
 
     if (search) {
       let searchPokemon: Pokemon[] = [];
-      const getPokemonData: Pokemon[] = yield call(
-        PokedexService.getPokemonDataSearch,
-        {
-          name: search,
-        }
-      );
+      const getPokemonData: Pokemon = yield call(PokedexService.searchPokemon, {
+        name: search,
+      });
 
       searchPokemon.push(getPokemonData);
-
-      console.tron.log("RESULT", searchPokemon);
 
       yield put(PokemonsActions.pokedexSuccessPokemons(searchPokemon));
     } else {
@@ -31,7 +26,7 @@ function* getPokemons({ data }: PokedexRequestPokemons) {
       });
 
       const getPokemonData: Pokemon[] = yield call(
-        PokedexService.getPokemonData,
+        PokedexService.getPokemonDetails,
         {
           data: getPokemons,
           search,
@@ -40,7 +35,6 @@ function* getPokemons({ data }: PokedexRequestPokemons) {
       yield put(PokemonsActions.pokedexSuccessPokemons(getPokemonData));
     }
   } catch (error) {
-    console.tron.log("error no failure", error.message);
     yield put(PokemonsActions.pokedexFailurePokemons(error.message));
   }
 }
@@ -58,8 +52,6 @@ function* getTypes({ data }: PokedexRequestTypes) {
     const getTypePokemon: Types[] = yield call(PokedexService.getTypePokemon, {
       data: params,
     });
-
-    console.tron.log("DAMAGE!!!!", getTypePokemon);
 
     yield put(PokemonsActions.pokedexSuccessTypes(getTypePokemon));
   } catch (error) {

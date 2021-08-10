@@ -1,38 +1,27 @@
-import { Pokemon, PokemonSpecie } from "../types";
-import pokeApi from "../services/pokeApi";
-
-import { capitalizeFirstLetter, getPokemonImageById } from ".";
-
-const getPokemonData = async (value: string) => {
-  const { data: pokemonData } = await pokeApi.get<Pokemon>(`/pokemon/${value}`);
-  const { data: pokemonSpecieData } = await pokeApi.get<PokemonSpecie>(
-    `/pokemon-species/${value}`
-  );
-
-  const pokemonNameIndex = pokemonSpecieData.names.findIndex(
-    (name) => name.language.name === "en"
+const getPokemonData = async (pokemonData: any, pokemonSpecieData: any) => {
+  const pokemonNameIndex = pokemonSpecieData.data.names.findIndex(
+    (name: any) => name.language.name === "en"
   );
 
   const pokemonFlavorTextIndex =
-    pokemonSpecieData.flavor_text_entries.findIndex(
-      (text) =>
+    pokemonSpecieData.data.flavor_text_entries.findIndex(
+      (text: any) =>
         text.version.name === "ruby" ||
         text.version.name === "platinum" ||
         text.version.name === "soulsilver"
     );
 
-  const pokemonGeneraIndex = pokemonSpecieData.genera.findIndex(
-    (genera) => genera.language.name === "en"
+  const pokemonGeneraIndex = pokemonSpecieData.data.genera.findIndex(
+    (genera: any) => genera.language.name === "en"
   );
-
-  const pokemonTypesFormatted = pokemonData.types.map(({ type }) => {
+  const pokemonTypesFormatted = pokemonData.data.types.map(({ type }: any) => {
     return {
-      name: capitalizeFirstLetter(type.name),
+      name: type.name.charAt(0).toUpperCase() + type.name.slice(1),
       url: type.url,
     };
   });
 
-  const pokemonStatsFormatted = pokemonData.stats.map((stat) => {
+  const pokemonStatsFormatted = pokemonData.data.stats.map((stat: any) => {
     let name = "";
 
     if (stat.stat.name === "hp") {
@@ -48,7 +37,6 @@ const getPokemonData = async (value: string) => {
     } else if (stat.stat.name === "speed") {
       name = "Speed";
     }
-
     return {
       base_stat: stat.base_stat,
       name,
@@ -56,35 +44,42 @@ const getPokemonData = async (value: string) => {
     };
   });
 
-  const pokemonAbilityFormatted = pokemonData.abilities.map(({ ability }) => {
-    return {
-      name: capitalizeFirstLetter(ability.name),
-      url: ability.url,
-    };
-  });
+  const pokemonAbilityFormatted = pokemonData.data.abilities.map(
+    ({ ability }: any) => {
+      return {
+        name: ability.name.charAt(0).toUpperCase() + ability.name.slice(1),
+        url: ability.url,
+      };
+    }
+  );
 
-  const eggGroupsFormatted = pokemonSpecieData.egg_groups.map((egg_group) => {
-    return {
-      name: capitalizeFirstLetter(egg_group.name),
-      url: egg_group.url,
-    };
-  });
+  const eggGroupsFormatted = pokemonSpecieData.data.egg_groups.map(
+    (egg_group: any) => {
+      return {
+        name: egg_group.name.charAt(0).toUpperCase() + egg_group.name.slice(1),
+        url: egg_group.url,
+      };
+    }
+  );
 
   return {
-    id: pokemonData.id,
-    name: pokemonSpecieData.names[pokemonNameIndex].name,
+    id: pokemonData.data.id,
+    name: pokemonSpecieData.data.names[pokemonNameIndex].name,
     description:
-      pokemonSpecieData.flavor_text_entries[pokemonFlavorTextIndex].flavor_text,
-    image: getPokemonImageById(String(pokemonData.id)),
-    genera: pokemonSpecieData.genera[pokemonGeneraIndex].genus,
-    pokedex_number: pokemonData.id.toString().padStart(3, "0"),
-    base_experience: pokemonData.base_experience,
+      pokemonSpecieData.data.flavor_text_entries[pokemonFlavorTextIndex]
+        .flavor_text,
+    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${String(
+      pokemonData.data.id
+    )}.png`,
+    genera: pokemonSpecieData.data.genera[pokemonGeneraIndex].genus,
+    pokedex_number: pokemonData.data.id.toString().padStart(3, "0"),
+    base_experience: pokemonData.data.base_experience,
     types: pokemonTypesFormatted,
     stats: pokemonStatsFormatted,
-    height: pokemonData.height,
-    weight: pokemonData.weight,
+    height: pokemonData.data.height,
+    weight: pokemonData.data.weight,
     abilites: pokemonAbilityFormatted,
-    gender_rate: pokemonSpecieData.gender_rate,
+    gender_rate: pokemonSpecieData.data.gender_rate,
     egg_groups: eggGroupsFormatted,
   };
 };

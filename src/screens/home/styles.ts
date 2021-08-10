@@ -33,3 +33,14 @@ export const SearchButton = styled(RectButton)`
   align-items: center;
   justify-content: center;
 `;
+
+export const NotFound = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const NotFoundText = styled.Text`
+  font-size: 18px;
+  padding-top: 30px;
+`;

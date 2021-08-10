@@ -6,7 +6,9 @@ import Pokeball from "../../../components/Pokeball";
 import PokemonTypes from "../../../components/PokemonTypes";
 import Text from "../../../components/Text";
 import { POKEMON_SUMMARY_HEIGHT } from "../../../constants";
-import { Pokemon } from "../../../types";
+import { Pokemon } from "../../../services/api/types";
+import { AntDesign as Icon } from "@expo/vector-icons";
+import { Alert } from "react-native";
 
 import {
   Container,
@@ -15,6 +17,9 @@ import {
   PokemonImageContainer,
   PokemonImage,
 } from "./styles";
+import { useTheme } from "styled-components";
+import firebase from "../../../config/firebaseConnection";
+import { useState } from "react";
 
 type SummaryProps = {
   translateY: Animated.Value;
@@ -24,6 +29,53 @@ type SummaryProps = {
 const Summary = ({ pokemon, translateY }: SummaryProps) => {
   const translateXNumber = useMemo(() => new Animated.Value(100), []);
   const translateXGenera = useMemo(() => new Animated.Value(200), []);
+
+  const { colors } = useTheme();
+  const [favoritePokemons, setFavoritePokemons] = useState([] as any);
+
+  const listFavorites = async () => {
+    await firebase
+      .database()
+      .ref("pokemons")
+      .on("value", (snapshot) => {
+        snapshot.forEach((item) => {
+          let data: any = {
+            key: item.key,
+            id: item.val().id,
+            name: item.val().name,
+          };
+          setFavoritePokemons((old: any) => [...old, data]);
+        });
+      });
+  };
+  useEffect(() => {
+    listFavorites();
+  }, []);
+
+  const addFavorite = async () => {
+    if (favoritePokemons.length >= 5) {
+      Alert.alert(
+        "Fail to add favorite pokemon",
+        "You have reached the limit of 5 favorite pokemons."
+      );
+    } else {
+      let pokemons = await firebase.database().ref("pokemons");
+      let key: any = pokemons.push().key;
+      pokemons.child(key).set({
+        id: pokemon.id,
+        name: pokemon.name,
+      });
+      setFavoritePokemons([]);
+      await listFavorites();
+    }
+  };
+
+  const removeFavorite = async (id: number) => {
+    const result = favoritePokemons.find((favorite: any) => favorite.id === id);
+    await firebase.database().ref("pokemons").child(result.key).remove();
+    setFavoritePokemons([]);
+    await listFavorites();
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -132,6 +184,24 @@ const Summary = ({ pokemon, translateY }: SummaryProps) => {
               <Text variant="body2" color="white" bold>
                 #{pokemon.pokedex_number}
               </Text>
+            </Animated.View>
+
+            <Animated.View style={pokedexNumberStyle}>
+              {favoritePokemons.some((e: any) => e.id === pokemon.id) ? (
+                <Icon
+                  name="heart"
+                  size={30}
+                  color={colors.white}
+                  onPress={() => removeFavorite(pokemon.id)}
+                />
+              ) : (
+                <Icon
+                  name="hearto"
+                  size={30}
+                  color={colors.white}
+                  onPress={addFavorite}
+                />
+              )}
             </Animated.View>
           </Row>
 

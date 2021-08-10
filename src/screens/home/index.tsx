@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Animated, View } from "react-native";
+import { Animated, Image, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
   PokemonsList,
   Search,
-  SearchButtonContainer,
   SearchButton,
+  NotFound,
+  NotFoundText,
 } from "./styles";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
@@ -14,7 +15,7 @@ import Loading from "../../components/Loading";
 import { API_OFFSET } from "../../constants";
 
 import Pokemon from "../../services/api/types";
-import PokemonCard from "../PokemonCard";
+import PokemonCard from "./PokemonCard";
 import { PokemonsActions } from "../../redux/reducers/reducer.pokemon";
 import {
   getMetaDataPokemonList,
@@ -25,14 +26,12 @@ import { MaterialIcons as Icon } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 
 const Home = () => {
-  //const { isSearching } = useSearch();
-
-  const [searchValue, setSearchValue] = useState("");
   const dispatch = useDispatch();
   const pokemonList = useSelector(getPokemonList);
   const { loading: loadingRequest, error } = useSelector(
     getMetaDataPokemonList
   );
+  const [searchValue, setSearchValue] = useState("");
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [offset, setOffset] = useState(0);
   const [counter, setCounter] = useState(1);
@@ -43,14 +42,7 @@ const Home = () => {
   const { colors } = useTheme();
   const opacity = useMemo(() => new Animated.Value(0), []);
   const translateY = useMemo(() => new Animated.Value(50), []);
-
   const width = useMemo(() => new Animated.Value(0), []);
-
-  const widthStyle = width.interpolate({
-    inputRange: [0, 48],
-    outputRange: [0, 48],
-    extrapolate: "clamp",
-  });
 
   useEffect(() => {
     Animated.timing(width, {
@@ -98,7 +90,7 @@ const Home = () => {
 
   const loadPokemons = useCallback(
     async (offsetValue = offset) => {
-      if (searchValue === "") {
+      if (searchValue === "" && !refreshing) {
         setLoading(true);
         dispatch(
           PokemonsActions.pokedexRequestPokemons({
@@ -135,7 +127,6 @@ const Home = () => {
   }
 
   const searchPokemon = () => {
-    console.tron.log("name poke", searchValue);
     setRefreshing(true);
     dispatch(
       PokemonsActions.pokedexRequestPokemons({
@@ -145,8 +136,14 @@ const Home = () => {
     );
   };
 
-  const clearSearch = () => {
+  const clearSearch = async () => {
     setSearchValue("");
+    setRefreshing(true);
+    dispatch(
+      PokemonsActions.pokedexRequestPokemons({
+        offset: 0,
+      })
+    );
   };
 
   return (
@@ -162,7 +159,7 @@ const Home = () => {
           setValue={setSearchValue}
           onFocus={() => setIsFocussed(true)}
           onBlur={() => setIsFocussed(false)}
-          reset={clearSearch}
+          reset={async () => await clearSearch()}
           autoCorrect={false}
         />
 
@@ -176,9 +173,13 @@ const Home = () => {
       </Search>
       {error ? (
         <Container>
-          <Header>
-            <Text>deu ruim</Text>
-          </Header>
+          <NotFound>
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../../../assets/pikachu.png")}
+            />
+            <NotFoundText>Pokemon not found</NotFoundText>
+          </NotFound>
         </Container>
       ) : (
         <PokemonsList

@@ -3,14 +3,14 @@ import { Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SharedElement } from "react-navigation-shared-element";
 
-import { Pokemon } from "../../services/api/types";
+import { Pokemon } from "../../../services/api/types";
 
-import Text from "../../components/Text";
-import PokemonTypes from "../../components/PokemonTypes";
-import Pokeball from "../../components/Pokeball";
+import Text from "../../../components/Text";
+import PokemonTypes from "../../../components/PokemonTypes";
+import Pokeball from "../../../components/Pokeball";
 
 import { Container, Button, PokedexNumber, PokemonImage } from "./styles";
-import getColorByPokemonType from "../../utils/getColorByPokemonType";
+import getColorByPokemonType from "../../../utils/getColorByPokemonType";
 import { AntDesign as Icon } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 
@@ -69,11 +69,13 @@ const PokemonCard = ({
           </Text>
         </SharedElement>
 
-        <PokedexNumber
-          style={{ fontSize: 10 }}
-          onPress={() => console.tron.log("favorita")}
-        >
-          <Icon name="hearto" size={20} color={colors.white} />
+        <PokedexNumber style={{ fontSize: 10 }}>
+          <Icon
+            onPress={() => console.tron.log("favorita")}
+            name="hearto"
+            size={15}
+            color={colors.white}
+          />
         </PokedexNumber>
 
         <SharedElement

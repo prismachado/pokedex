@@ -13,32 +13,26 @@ export default {
   textVariantes: {
     title: {
       fontSize: "32px",
-
       lineHeight: "44px",
     },
     body1: {
       fontSize: "18px",
-
       lineHeight: "22px",
     },
     body2: {
       fontSize: "16px",
-
       lineHeight: "22px",
     },
     body3: {
       fontSize: "14px",
-
       lineHeight: "18px",
     },
     input: {
       fontSize: "14px",
-
       lineHeight: "18px",
     },
     caption: {
       fontSize: "12px",
-
       lineHeight: "18px",
     },
   },

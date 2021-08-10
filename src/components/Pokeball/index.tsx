@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Animated, Easing, RegisteredStyle, ViewStyle } from "react-native";
-
-import pokeballImage from "../../../assets/pokeball.png";
 import theme from "../../styles/theme";
 
 import { Container, PokeballImage } from "./styles";
@@ -69,7 +67,7 @@ const Pokeball = ({
   return (
     <Container style={[withRotate && pokeballStyle, style]}>
       <PokeballImage
-        source={pokeballImage}
+        source={require("../../../assets/pokeball.png")}
         width={width}
         height={height}
         style={{

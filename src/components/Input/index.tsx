@@ -12,7 +12,6 @@ type InputProps = TextInputProps & {
 
 const Input = ({ setValue, icon, reset, ...rest }: InputProps) => {
   const { colors } = useTheme();
-  console.tron.log("rest", rest);
 
   return (
     <Container>

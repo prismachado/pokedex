@@ -1,26 +1,26 @@
-import React, { useCallback, useRef, useMemo } from 'react';
-import { Animated, Dimensions, ScrollView } from 'react-native';
-import { useTheme } from 'styled-components';
+import React, { useCallback, useRef, useMemo } from "react";
+import { Animated, Dimensions, ScrollView } from "react-native";
+import { useTheme } from "styled-components";
 
-import { POKEMON_SUMMARY_HEIGHT } from '../../../constants';
-import { Pokemon } from '../../../types';
-import Text from '../../../components/Text';
+import { POKEMON_SUMMARY_HEIGHT } from "../../../constants";
+import { Pokemon } from "../../../services/api/types";
+import Text from "../../../components/Text";
 
-import { tabs, TAB_BUTTON_WIDTH } from './tabs';
+import { tabs, TAB_BUTTON_WIDTH } from "./tabs";
 import {
   Container,
   Tabs,
   TabButton,
   SelectedIndicator,
   SlideWrapper,
-} from './styles';
+} from "./styles";
 
 type DetailsProps = {
   translateY: Animated.Value;
   pokemon: Pokemon;
 };
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const Details = ({ pokemon, translateY }: DetailsProps) => {
   const { colors } = useTheme();
@@ -48,7 +48,7 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
         },
       },
     ],
-    { useNativeDriver: false },
+    { useNativeDriver: false }
   );
 
   const containerStyle = {
@@ -57,7 +57,7 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
         translateY: translateY.interpolate({
           inputRange: [-POKEMON_SUMMARY_HEIGHT, 0],
           outputRange: [0, -32],
-          extrapolate: 'clamp',
+          extrapolate: "clamp",
         }),
       },
     ],
@@ -67,9 +67,11 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
     transform: [
       {
         translateX: translateX.interpolate({
-          inputRange: tabs.map((_, index) => width * index),
-          outputRange: tabs.map((_, index) => TAB_BUTTON_WIDTH * index),
-          extrapolate: 'clamp',
+          inputRange: tabs.map((_: any, index: any) => width * index),
+          outputRange: tabs.map(
+            (_: any, index: any) => TAB_BUTTON_WIDTH * index
+          ),
+          extrapolate: "clamp",
         }),
       },
     ],
@@ -78,7 +80,7 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
   return (
     <Container style={containerStyle}>
       <Tabs>
-        {tabs.map((tab, index) => {
+        {tabs.map((tab: any, index: any) => {
           const color = translateX.interpolate({
             inputRange: [
               (index - 1) * width,
@@ -86,7 +88,7 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
               (index + 1) * width,
             ],
             outputRange: [colors.grey, colors.black, colors.grey],
-            extrapolate: 'clamp',
+            extrapolate: "clamp",
           });
 
           return (
@@ -110,7 +112,7 @@ const Details = ({ pokemon, translateY }: DetailsProps) => {
         decelerationRate="fast"
         bounces={false}
       >
-        {tabs.map(({ slide: Slide }, index) => (
+        {tabs.map(({ slide: Slide }: any, index: any) => (
           <SlideWrapper key={index}>
             <Slide pokemon={pokemon} />
           </SlideWrapper>

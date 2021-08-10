@@ -3,8 +3,7 @@ import { Animated } from "react-native";
 import { useTheme } from "styled-components";
 import { Feather as Icon } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
-import { Pokemon } from "../../../types";
+import { Pokemon } from "../../../services/api/types";
 import Text from "../../../components/Text";
 import Pokeball from "../../../components/Pokeball";
 

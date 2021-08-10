@@ -3,7 +3,7 @@ import { RectButton } from "react-native-gesture-handler";
 import { Animated } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 
-import Text from "../../components/Text";
+import Text from "../../../components/Text";
 
 type ButtonProps = {
   afterThirdCard: boolean;

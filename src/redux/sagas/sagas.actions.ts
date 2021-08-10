@@ -1,4 +1,3 @@
-import { reducer } from "./../reducers/reducer.pokemon";
 import { put, takeLatest } from "redux-saga/effects";
 import { PokemonsActions } from "../reducers/reducer.pokemon";
 import {
