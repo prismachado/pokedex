@@ -9,6 +9,9 @@ import {
   NotFound,
   NotFoundText,
 } from "./styles";
+
+//
+
 import Header from "../../components/Header";
 import Text from "../../components/Text";
 import Loading from "../../components/Loading";
